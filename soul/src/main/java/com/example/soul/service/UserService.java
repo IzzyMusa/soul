@@ -4,6 +4,7 @@ import com.example.soul.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -31,9 +32,22 @@ public class UserService {
         return user;
     }
 
-    public User findOne(Integer id){
-        for(User user : users){
-            if (user.getId()==id){
+    public User findOne(Integer id) {
+        for (User user : users) {
+            if (user.getId().equals(id)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public User deleteUser(Integer id) {
+
+        Iterator<User> iterator = users.iterator();
+        while (iterator.hasNext()) {
+            User user = iterator.next();
+            if (user.getId().equals(id)) {
+                iterator.remove();
                 return user;
             }
         }

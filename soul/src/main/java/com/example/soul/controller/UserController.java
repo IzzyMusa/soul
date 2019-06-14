@@ -1,5 +1,6 @@
 package com.example.soul.controller;
 
+import com.example.soul.exception.UserNotFoundException;
 import com.example.soul.model.User;
 import com.example.soul.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,10 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public User getUser(@PathVariable Integer id){
-
+        User user = service.findOne(id);
+        if(user == null){
+            throw new UserNotFoundException("id-" + id);
+        }
         return service.findOne(id);
 
     }
@@ -37,6 +41,14 @@ public class UserController {
                 .path("/{id}")
                 .buildAndExpand(savedUser.getId()).toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable Integer id){
+        User user = service.deleteUser(id);
+        if (user == null){
+            throw new UserNotFoundException("id-" + id);
+        }
     }
 
 
