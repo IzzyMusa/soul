@@ -1,7 +1,9 @@
 package com.example.soul.exception;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,4 +39,18 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(exceptionResoponse, HttpStatus.NOT_FOUND);
 
     }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        ExceptionResoponse exceptionResoponse =
+                new ExceptionResoponse(new Date(), ex.getMessage(),
+                        ex.getBindingResult().toString());
+
+        return new ResponseEntity<>(exceptionResoponse, HttpStatus.BAD_REQUEST);
+    }
+
+
+
 }

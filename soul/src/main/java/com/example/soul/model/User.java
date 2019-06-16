@@ -1,15 +1,26 @@
 package com.example.soul.model;
 
-public class User {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
+    @Size(min = 2)
     private String firstName;
 
     private String lastName;
 
     private Integer age;
 
+    @Email
     private String email;
 
     protected User() {

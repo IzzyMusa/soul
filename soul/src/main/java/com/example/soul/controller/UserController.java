@@ -2,39 +2,41 @@ package com.example.soul.controller;
 
 import com.example.soul.exception.UserNotFoundException;
 import com.example.soul.model.User;
-import com.example.soul.service.UserService;
+import com.example.soul.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserController {
 
     @Autowired
-    private UserService service;
+    private UserRepository userRepository;
 
     @GetMapping("/users")
     public List<User> retrieveAllUsers() {
-        return service.getAllUsers();
+        return userRepository.findAll();
     }
 
     @GetMapping("/users/{id}")
-    public User getUser(@PathVariable Integer id){
-        User user = service.findOne(id);
-        if(user == null){
+    public Optional<User>  getUser(@PathVariable Integer id){
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty()){
             throw new UserNotFoundException("id-" + id);
         }
-        return service.findOne(id);
-
+        return user;
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Object> createUser(@RequestBody User user){
-        User savedUser =  service.save(user);
+    public ResponseEntity<Object> createUser(@Valid @RequestBody User user){
+        User savedUser =  userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -43,13 +45,14 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
-    @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable Integer id){
-        User user = service.deleteUser(id);
-        if (user == null){
-            throw new UserNotFoundException("id-" + id);
-        }
+    @DeleteMapping("/users")
+    public void deleteUser() {
+        userRepository.deleteAll();
     }
 
+        @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable Integer id){
+        userRepository.deleteById(id);
 
+        }
 }
