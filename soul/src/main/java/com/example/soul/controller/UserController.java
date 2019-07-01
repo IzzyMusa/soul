@@ -2,9 +2,8 @@ package com.example.soul.controller;
 
 import com.example.soul.exception.UserNotFoundException;
 import com.example.soul.model.User;
-import com.example.soul.repository.UserRepository;
+import com.example.soul.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,25 +17,25 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping("/users")
     public List<User> retrieveAllUsers() {
-        return userRepository.findAll();
+        return userService.retrieveAllUsers();
     }
 
     @GetMapping("/users/{id}")
-    public Optional<User>  getUser(@PathVariable Integer id){
-        Optional<User> user = userRepository.findById(id);
-        if(user.isEmpty()){
+    public Optional<User> getUser(@PathVariable Integer id) {
+        Optional<User> user = userService.getUser(id);
+        if (user.isEmpty()) {
             throw new UserNotFoundException("id-" + id);
         }
         return user;
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Object> createUser(@Valid @RequestBody User user){
-        User savedUser =  userRepository.save(user);
+    public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
+        User savedUser = userService.createUser(user);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -47,12 +46,12 @@ public class UserController {
 
     @DeleteMapping("/users")
     public void deleteUser() {
-        userRepository.deleteAll();
+        userService.deleteUser();
     }
 
-        @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable Integer id){
-        userRepository.deleteById(id);
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable Integer id) {
+        userService.deleteUser(id);
 
-        }
+    }
 }
